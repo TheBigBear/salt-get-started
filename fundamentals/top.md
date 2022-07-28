@@ -1,18 +1,18 @@
 ---
 title: Apply and Target States
-permalink: /fundamentals/top.html
+permalink: fundamentals/top.html
 type: page
 layout: getstarted.tmpl
 series: SaltStack Fundamentals
 step: 6
 overview:
   goals:
-    - Create a Top file to match systems with state files
+    - Create a Top file to match systems with Salt state files
   time: 15
   difficulty: 2
 next:
   title: Continue to Configuration Management Get Started
-  url: ../config/
+  url: config/
 modals:
   - id: highstate-modal
     title: Highstate?
@@ -25,9 +25,9 @@ modals:
     button: Got It!
 ---
 
-{: section gs-sidebar :}
+{: section sidebar :}
 
-#### SaltStack Formulas Repo { .sidebar }
+#### SaltStack Formulas Repo
 
 The Salt Community provides a vast repository of Formulas at
 <https://github.com/saltstack-formulas>.
@@ -42,14 +42,14 @@ option:
 salt --batch-size 10 '*' state.apply
 ```
 
-{: end gs-sidebar :}
+{: end sidebar :}
 
 Let's review what we've learned so far:
 
 -   How to run a single command from the command line on one or more Salt minions.
 -   Group multiple commands and use new commands to define re-usable states.
 
-Notice how the state we created in the previous section did not contain any
+Notice how the Salt state we created in the previous section did not contain any
 information about the Salt minions that should receive the configuration? Salt
 states are generic by design, and describe only *how* a configuration should be
 achieved.
@@ -70,14 +70,14 @@ file.
 ## Create your own Top file
 
 Before we create a Top file, it might be useful to take a moment to think about
-what what *your* system configurations look like. Consider the different types
+what *your* system configurations look like. Consider the different types
 of systems you set up, and what is common and unique about each. Each system
 can receive multiple configurations, so start with the most general
 configurations and work your way down to the specifics.
 
 For example, you might start with a simple description similar to the following:
 
-<img class="imgcenter" src="../images/planning1.png">
+<img class="imgcenter" src="{{ conf.images }}/planning1.png">
 
 In the SaltStack paradigm, the list itself would be the Top file, and each item
 on the list would be a state. Targets are used within the Top file to define
@@ -86,7 +86,7 @@ which states are applied to each Salt minion.
 The following example shows how our configurations might be translated to YAML
 and represented in a Top file:
 
-![](../images/planning.png)
+![]({{ conf.images }}/planning.png)
 
 When the Top file is evaluated, Salt minions execute all states that are
 defined for any target that they match. For example, a system with a Salt
@@ -105,6 +105,27 @@ base:
     - common
   'minion1':
     - nettools
+```
+
+If you are not using the Vagrant demo files you'll need to create a directory
+called common alongside top.sls, and add two files inside the common directory.
+
+common/init.sls:
+
+```bash
+include:
+  - common.packages
+```
+
+common/packages.sls:
+
+```bash
+common_packages:
+  pkg.installed:
+    - pkgs:
+      - htop
+      - strace
+      - vim
 ```
 
 Hopefully it is clear to you what will happen when this is applied, so let's
